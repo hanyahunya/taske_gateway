@@ -30,6 +30,10 @@ spring:
             #   filters:
             #     - StripPrefix=1
 
+jwt:
+  accesstoken:
+    secret: ${TASKE_JWT_ACCESS_SECRET}
+
 #logging:
 #  level:
 #    org.springframework.cloud.gateway: TRACE
