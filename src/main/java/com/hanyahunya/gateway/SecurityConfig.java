@@ -13,6 +13,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
@@ -20,14 +22,31 @@ public class SecurityConfig {
 
     private final AuthenticationFilter authenticationFilter;
 
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOriginPattern("https://hanyahunya.com");
+//        configuration.addAllowedOriginPattern("*"); // dev
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+
+    // dev
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOriginPattern("https://hanyahunya.com"); // prod
-        configuration.addAllowedOriginPattern("*"); // dev
+        configuration.addAllowedOriginPattern("http://localhost:3000");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
+
+        configuration.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

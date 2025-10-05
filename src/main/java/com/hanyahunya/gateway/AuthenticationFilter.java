@@ -93,6 +93,13 @@ public class AuthenticationFilter implements WebFilter {
                                 if (tokenIssuedAt < compromisedAt) {
                                     return onError(exchange, "無効化されたトークンです。ユーザーID:" + userId);
                                 }
+
+                                /* 더미 엔드포인트 */
+                                if (path.startsWith("/token/verify")) {
+                                    exchange.getResponse().setStatusCode(HttpStatus.OK);
+                                    return exchange.getResponse().setComplete();
+                                }
+
                                 // 도난 발생 이후에 발급된 새 토큰이면, 정상 처리
                                 return passThrough(exchange, chain, userId, role);
                             })
@@ -106,9 +113,16 @@ public class AuthenticationFilter implements WebFilter {
                              * 만약 Mono.defer() 가 없으면 설계도를 만드는 과정에서 아직 존재하지 않은 userId, role을 쓰면 변수를 못찾고 오류.
                              * -> 이를 해결하기 위해 Mono.defer로 구독 전에 실행 안되게 지연.
                              */
-                            .switchIfEmpty(Mono.defer(
-                                    () -> passThrough(exchange, chain, userId, role))
-                            );
+                            .switchIfEmpty(Mono.defer(() -> {
+
+                                /* 더미 엔드포인트 */
+                                if (path.startsWith("/token/verify")) {
+                                    exchange.getResponse().setStatusCode(HttpStatus.OK);
+                                    return exchange.getResponse().setComplete();
+                                }
+
+                                return passThrough(exchange, chain, userId, role);
+                            }));
                 })
                 // 토큰 파싱중 예외발생시 (만료, 서명 오류 등) 401 반환
                 .onErrorResume(e -> onError(exchange, "無効なトークンです。"));
